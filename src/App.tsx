@@ -121,6 +121,12 @@ const App: React.FC = () => {
       <div className='boad-container'>
         <Board board={board} dummyFlag={dummyboard} onTileClick={handleTileClick} getNextDirection={getNextDirection} />
       </div>
+      <div className=" p-3 text-start text-secondary-emphasis bg-secondary-subtle rounded-3">
+        <p> 空タイルに隣接するタイルをクリックすると動かせます </p>
+        <p> 動かせるタイルにマウスをホバーすると、移動可能な方向が表示されます </p>
+        <p> パズルのサイズを変更することができます </p>
+        <p> Edit modeを押すと、クリックしたタイルが動かせないタイルになります </p>
+      </div>
     </div>
   );
 };
