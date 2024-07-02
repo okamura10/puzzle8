@@ -35,13 +35,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #000;
-    background-color: #fff;
     cursor: pointer;
-}
-
-.tile:empty {
-    background-color: #eee;
 }
 
 .arrow {

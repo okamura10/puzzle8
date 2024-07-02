@@ -4,11 +4,12 @@ import { BoardType } from '../types';
 
 interface BoardProps {
     board: BoardType;
+    dummyFlag: BoardType;
     onTileClick: (row: number, col: number) => void;
     getNextDirection: (row: number, col: number) => string | null;
 }
 
-const Board: React.FC<BoardProps> = ({ board, onTileClick, getNextDirection }) => {
+const Board: React.FC<BoardProps> = ({ board,dummyFlag, onTileClick, getNextDirection }) => {
     const gridStyle = {
         display: 'grid',
         gridTemplateColumns: `repeat(${board[0].length}, 60px)`,
@@ -23,6 +24,7 @@ const Board: React.FC<BoardProps> = ({ board, onTileClick, getNextDirection }) =
                     <Tile
                         key={`${rowIndex}-${colIndex}`}
                         value={tile}
+                        dummyFlag={dummyFlag[rowIndex][colIndex]}
                         onClick={() => onTileClick(rowIndex, colIndex)}
                         nextDirection={getNextDirection(rowIndex, colIndex)}
                     />

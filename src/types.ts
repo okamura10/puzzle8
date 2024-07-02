@@ -1,2 +1,2 @@
-export type TileType = number | null;
+export type TileType = number;
 export type BoardType = TileType[][];

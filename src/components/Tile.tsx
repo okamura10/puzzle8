@@ -1,12 +1,13 @@
 import React from 'react';
 
 interface TileProps {
-    value: number | null;
+    value: number;
+    dummyFlag: number;
     onClick: () => void;
     nextDirection: string | null;
 }
 
-const Tile: React.FC<TileProps> = ({ value, onClick, nextDirection }) => {
+const Tile: React.FC<TileProps> = ({ value, dummyFlag,onClick, nextDirection }) => {
     const [isHovered, setIsHovered] = React.useState(false);
 
     return (
@@ -14,10 +15,10 @@ const Tile: React.FC<TileProps> = ({ value, onClick, nextDirection }) => {
             className="tile-wrapper"
             onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}
             onClick={onClick}>
-            <button className="btn btn-light tile">
-                {value !== null ? value : ''}
+            <button className={dummyFlag ? "btn btn-secondary disabled tile" :"btn btn-light tile"}>
+                {value !== 0 ? value : ''}
             </button>
-            {isHovered && nextDirection && (
+            {!dummyFlag &&isHovered && nextDirection && (
                 <div className={`arrow ${nextDirection}`}>{nextDirection}</div>
             )}
         </div>

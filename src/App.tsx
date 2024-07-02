@@ -5,7 +5,15 @@ import './styles.css';
 
 const createInitialBoard = (rows: number, cols: number): BoardType => {
   const totalTiles = rows * cols;
-  const tiles = Array.from({ length: totalTiles }, (_, index) => (index < totalTiles - 1 ? index + 1 : null));
+  const tiles = Array.from({ length: totalTiles }, (_, index) => (index < totalTiles - 1 ? index + 1 : 0));
+  const board: BoardType = [];
+  while (tiles.length) board.push(tiles.splice(0, cols));
+  return board;
+};
+
+const createInitialdummy = (rows: number, cols: number): BoardType => {
+  const totalTiles = rows * cols;
+  const tiles = Array.from({ length: totalTiles }, (_, index) => (index < totalTiles - 1 ? 0 : 0));
   const board: BoardType = [];
   while (tiles.length) board.push(tiles.splice(0, cols));
   return board;
@@ -19,21 +27,30 @@ const App: React.FC = () => {
   const [tmpRows,setTmpRows] = useState<number>(3);
   const [tmpCols,setTmpCols] = useState<number>(3);
 
-  const handleTileClick = (row: number, col: number) => {
-    const newBoard = [...board];
-    const emptyTile = findEmptyTile(board);
+  const [isEdditMode, setIsEdditMode] = useState<boolean>(false);
+  const [dummyboard, setDummyBoard] = useState<BoardType>(createInitialdummy(3, 3));
 
-    if (isAdjacent(emptyTile, [row, col])) {
-      [newBoard[emptyTile[0]][emptyTile[1]], newBoard[row][col]] =
-        [newBoard[row][col], newBoard[emptyTile[0]][emptyTile[1]]];
-      setBoard(newBoard);
+  const handleTileClick = (row: number, col: number) => {
+    if(isEdditMode && board[row][col] !== 0){
+      const newDummyBoard = [...dummyboard];
+      newDummyBoard[row][col] = newDummyBoard[row][col] === 0 ? 1 : 0;
+      setDummyBoard(newDummyBoard);
+    }else{
+      const newBoard = [...board];
+      const emptyTile = findEmptyTile(board);
+      if(dummyboard[row][col] === 1)return;
+      if (isAdjacent(emptyTile, [row, col])) {
+        [newBoard[emptyTile[0]][emptyTile[1]], newBoard[row][col]] =
+          [newBoard[row][col], newBoard[emptyTile[0]][emptyTile[1]]];
+        setBoard(newBoard);
+      }
     }
   };
 
   const findEmptyTile = (board: BoardType): [number, number] => {
     for (let row = 0; row < board.length; row++) {
       for (let col = 0; col < board[row].length; col++) {
-        if (board[row][col] === null) {
+        if (board[row][col] === 0) {
           return [row, col];
         }
       }
@@ -57,12 +74,20 @@ const App: React.FC = () => {
   };
 
   const handleBoardSizeChange = () => {
-    setRows(tmpRows);
-    setCols(tmpCols);
-    setBoard(createInitialBoard(tmpRows, tmpCols));
+    if(tmpRows < 1 || tmpCols < 1 || tmpRows > 10 || tmpCols > 10 || tmpRows !== Math.floor(tmpRows) || tmpCols !== Math.floor(tmpCols)){
+      alert('1 - 10');
+    }else{
+      setRows(tmpRows);
+      setCols(tmpCols);
+      setBoard(createInitialBoard(tmpRows, tmpCols));
+      setDummyBoard(createInitialdummy(tmpRows, tmpCols));
+    }
   }
 
   const getNextDirection = (row: number, col: number): string | null => {
+    if(isEdditMode){
+      return null;
+    }
     const emptyTile = findEmptyTile(board);
     if (isAdjacent(emptyTile, [row, col])) {
       if (emptyTile[0] === row) {
@@ -72,6 +97,10 @@ const App: React.FC = () => {
       }
     }
     return null;
+  };
+
+  const toggleEdditMode = () => {
+    setIsEdditMode(!isEdditMode);
   };
 
 
@@ -84,12 +113,13 @@ const App: React.FC = () => {
         </label>
         x
         <label className='form-label'>
-          <input type='number' className='form-control' value={tmpCols} onChange={handleColsChange} min='2' max='10' />
+          <input type='number' className='form-control' value={tmpCols} onChange={handleColsChange} min='2' max='10'/>
         </label>
         <button className="btn btn-primary" onClick={handleBoardSizeChange}>Apply</button>
       </div>
+      <button className={isEdditMode ? "btn btn-outline-primary" :"btn btn-primary"} onClick={toggleEdditMode}>{isEdditMode ? 'Eddit finish' : 'Edit mode'}</button>
       <div className='boad-container'>
-        <Board board={board} onTileClick={handleTileClick} getNextDirection={getNextDirection} />
+        <Board board={board} dummyFlag={dummyboard} onTileClick={handleTileClick} getNextDirection={getNextDirection} />
       </div>
     </div>
   );
